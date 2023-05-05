@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Список авто{% endblock %}
+{% block body %}
+<h3>Список авто</h3>
+<a href="/add-car">add car</a><br/>
+{% for car in cars %}
+<p><a href="/cars/{{ car.id }}">{{ car.model }}</a></p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Список авто{% endblock %}
+{% block body %}
+<h3>{{car.title}}</h3>
+<p>{{ car.model }}</p>
+<p>{{ car.color }}</p>
+<p>{{ car.number }}</p>
+<p>{{ car.price_per_hour }}</p>
+<form action="/order/{{ car.id }}">
+    <input type="submit" value="Order" />
+</form>
+{% endblock %}
