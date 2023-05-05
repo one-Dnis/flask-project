@@ -36,7 +36,7 @@ class Car(db.Model):
     model = db.Column(db.String(50))
     color = db.Column(db.String(50))
     number = db.Column(db.String(50))
-    price_per_hour = db.Column(db.String(50))
+    price_per_hour = db.Column(db.Double)
 
 
 class Order(db.Model):
@@ -45,7 +45,7 @@ class Order(db.Model):
     car_id = db.Column(db.Integer, db.ForeignKey('car.id'))
     start_date = db.Column(db.Date)
     end_date = db.Column(db.Date)
-    price = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Double)
 
 
 @login_manager.user_loader

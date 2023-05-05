@@ -1,8 +1,9 @@
+import flask_login
 from flask import render_template, request, redirect, url_for, flash, session
 from flask_login import logout_user, login_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from cars import app, db
-from cars.models import check_email_in_db, Article, User
+from cars.models import check_email_in_db, Article, User, Car, Order
 
 
 @app.route('/home')
@@ -133,14 +134,61 @@ def registration():
             return render_template('registration.html', name=name, email=email)
     return render_template('registration.html')
 
-@app.route('/add-car')
+
+@app.route('/add-car', methods=['POST', 'GET'])
 def add_car():
+    if request.method == 'POST':
+        model = request.form.get('model')
+        color = request.form.get('color')
+        number = request.form.get('number')
+        price_per_hour = request.form.get('price_per_hour')
+
+        #запилить проверку тут
+
+        car = Car(model=model, color=color, number=number, price_per_hour=price_per_hour)
+        try:
+            db.session.add(car)
+            db.session.commit()
+
+            return redirect(url_for('cars'))
+        except:
+            db.session.rollback()
+            flash('car database error')
+            return render_template(
+                'add-car.html', model=model, color=color, number=number, price_per_hour=price_per_hour
+            )
+
     return render_template('add-car.html')
 
-@app.route('/order')
-def order():
-    return render_template('order.html')
 
+@app.route('/cars')
+def cars():
+    cars_list = Car.query.all()
+    return render_template('cars-page.html', cars=cars_list)
+
+
+@app.route('/cars/<int:id>')
+def car_detail(id):
+    car = Car.query.get(id)
+    return render_template('car-detail.html', car=car)
+
+
+@app.route('/order/<int:id>', methods=['POST', 'GET'])
+def order(id):
+    if request.method == 'POST':
+        car = Car.query.get(id)
+        user_id = flask_login.current_user.id
+        car_id = car.id
+        #решить вопрос с форматом даты
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date')
+        price = request.form.get('price')
+        print(start_date)
+        print(end_date)
+        return render_template('order.html')
+    # order = Order(
+    #     user_id=user_id, car_id=car_id, start_date=start_date, end_date=end_date, price=price)
+    return render_template('order.html')
 
 
 @app.route('/logout')
